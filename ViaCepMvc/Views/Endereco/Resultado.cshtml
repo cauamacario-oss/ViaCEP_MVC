@@ -1,0 +1,26 @@
+@model ViaCepMvc.Models.EnderecoViewModel
+
+@{
+    ViewData["Title"] = "Dados Recebidos";
+}
+
+<div class="container mt-4">
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">Sucesso!</h4>
+        <p>Os dados foram enviados e processados com sucesso pelo Servidor via Model Binding.</p>
+    </div>
+
+    <h2>Dados Cadastrados (Somente Leitura)</h2>
+    <hr />
+
+    <div class="card bg-light col-md-6 p-4">
+        <div class="mb-2"><strong>CEP:</strong> @Model.Cep</div>
+        <div class="mb-2"><strong>Logradouro:</strong> @Model.Logradouro</div>
+        <div class="mb-2"><strong>Bairro:</strong> @Model.Bairro</div>
+        <div class="mb-2"><strong>Cidade:</strong> @Model.Cidade</div>
+        <div class="mb-2"><strong>UF:</strong> @Model.Uf</div>
+    </div>
+
+    <br />
+    <a asp-action="Index" class="btn btn-primary">Voltar para Nova Consulta</a>
+</div>

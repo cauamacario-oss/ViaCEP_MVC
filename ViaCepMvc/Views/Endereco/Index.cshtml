@@ -1,0 +1,86 @@
+@model ViaCepMvc.Models.EnderecoViewModel
+
+@{
+    ViewData["Title"] = "Buscar Endereço";
+}
+
+<div class="container mt-4">
+    <h2>Integrar com API ViaCEP</h2>
+    <p class="text-muted">Preencha o CEP e saia do campo para buscar os dados automaticamente.</p>
+    <hr />
+
+    <form asp-action="EnviarDados" method="post" class="col-md-6">
+        <div class="mb-3">
+            <label class="form-label">CEP:</label>
+            <input type="text" id="cep" asp-for="Cep" class="form-control" placeholder="00000000" maxlength="9" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Logradouro:</label>
+            <input type="text" id="logradouro" asp-for="Logradouro" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Bairro:</label>
+            <input type="text" id="bairro" asp-for="Bairro" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Cidade:</label>
+            <input type="text" id="cidade" asp-for="Cidade" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">UF:</label>
+            <input type="text" id="uf" asp-for="Uf" class="form-control" />
+        </div>
+        
+        <button type="submit" class="btn btn-success">Enviar Dados para o Server-Side</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#cep').blur(function () {
+                var cep = $(this).val().replace(/\D/g, '');
+
+                if (cep !== "") {
+                    var validacep = /^[0-9]{8}$/;
+
+                    if (validacep.test(cep)) {
+                        $("#logradouro").val("...");
+                        $("#bairro").val("...");
+                        $("#cidade").val("...");
+                        $("#uf").val("...");
+
+                        $.getJSON("https://viacep.com.br/ws/" + cep + "/json/", function (dados) {
+                            if (!("erro" in dados)) {
+                                $("#logradouro").val(dados.logradouro);
+                                $("#bairro").val(dados.bairro);
+                                $("#cidade").val(dados.localidade); // ViaCEP usa 'localidade' para a Cidade
+                                $("#uf").val(dados.uf);
+                            } else {
+                                alert("CEP não encontrado.");
+                                limparFormulario();
+                            }
+                        }).fail(function() {
+                            alert("Erro ao consultar a API.");
+                            limparFormulario();
+                        });
+                    } else {
+                        alert("Formato de CEP inválido.");
+                        limparFormulario();
+                    }
+                } else {
+                    limparFormulario();
+                }
+            });
+
+            function limparFormulario() {
+                $("#cep").val("");
+                $("#logradouro").val("");
+                $("#bairro").val("");
+                $("#cidade").val("");
+                $("#uf").val("");
+            }
+        });
+    </script>
+}
